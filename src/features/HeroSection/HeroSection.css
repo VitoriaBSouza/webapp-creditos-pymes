@@ -1,17 +1,19 @@
-.container.heroe {
-  padding: 4rem 2rem;
-  margin: 2rem auto;
-  background-color: var(--gray-500) ; 
-  border-radius: 1rem;
+.heroe {
+  background-image: url('@/assets/images/fondo.webp');
+  background-size: cover;
+  background-position: center;
+  height: 80vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   text-align: center;
+  padding-top: 8rem;
+  color: white;
 }
 
-.container.heroe .btn.btn-primary.btn-lg {
-  background-color: #633232;
-  border: none;
-  color: #fff;
-}
-
-.container.heroe .btn.btn-primary.btn-lg:hover {
-  background-color: #972424;
+.heroe .content {
+  max-width: 650px;
+  margin: 3rem auto 0 auto;
 }

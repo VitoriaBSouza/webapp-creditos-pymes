@@ -1,0 +1,125 @@
+.table-custom thead th {
+  font-weight: 600;
+  color: var(--teal-700);
+  border-bottom: 2px solid var(--teal-300);
+}
+
+.table-custom tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: var(--aqua-100-50) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
+}
+
+.table-custom tbody td {
+  vertical-align: middle;
+  padding: 1rem;
+}
+
+.table-custom .card {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.badge_status{
+  width: 7rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.badge-pendiente {
+  background-color: var(--aqua-600);
+}
+
+.badge-aprobado {
+  background-color: var(--green-500);
+}
+
+.badge-rechazado {
+  background-color: var(--red-600);
+}
+
+.badge-in-review {
+  background-color: var(--yellow-600);
+}
+
+.badge-draft {
+  background-color: var(--teal-200);
+}
+
+.table-custom .text-success {
+  color: var(--green-500) !important;
+}
+
+.table-custom .text-warning {
+  color: var(--yellow-500) !important;
+}
+
+.table thead th {
+  font-weight: 600;
+  color: var(--teal-700);
+  border-bottom: 2px solid var(--teal-300);
+  background-color: rgba(210, 209, 209, 0.689);
+}
+
+.table-custom .text-danger {
+  color: var(--red-500) !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Estilos para ordenamiento */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.sortable-header:hover {
+  background-color: var(--teal-100) !important;
+  color: var(--teal-700);
+}
+
+.sortable-header:hover .sort-indicator .sort-circle {
+  opacity: 1;
+  transform: scale(1.2);
+  background-color: var(--teal-500);
+}
+
+.sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.sort-circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--teal-400);
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+
+.sort-indicator.active .sort-circle {
+  opacity: 1;
+  background-color: var(--blue-600);
+  box-shadow: 0 0 0 3px var(--teal-100);
+}
+
+.table-wrapper, .table-container {
+  max-height: none;        /* remove fixed heights */
+  min-height: auto;        /* no forced minimum */
+  overflow-y: auto;        /* scrollbar only if needed */
+}
+.table-responsive {
+  overflow-x: auto;        /* keep horizontal scroll if table is too wide */
+  overflow-y: visible;     /* no vertical scroll forced */
+}

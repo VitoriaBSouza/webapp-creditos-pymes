@@ -7,12 +7,29 @@
   box-sizing: border-box;
 }
 
+/* This is to check errors on the frontend uncomment to use it */
+/* * {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
+}
+html,
 body {
-  background-color: #ffffff;
+  border: 2px solid blue;
+} */
+
+/* If you uncomment above, comment this body class */
+
+html{
+  font-size: 90%;
+}
+
+body {
+  line-height: 2;
+  font-family: "Nunito", sans-serif;
 }
 
 #root {
-  max-width: 1200px;
+  max-width: 1700px;
   width: 100%;
   margin: 0 auto;
+ 
 }

@@ -30,7 +30,23 @@ cd webapp-creditos-pymes
 
 # Instalar dependencias
 npm install
+```
 
+### ⚙️ Configuración del entorno
+
+Antes de ejecutar la aplicación, crea un archivo **.env** en la raíz del proyecto con el siguiente contenido (usa las credenciales de tu proyecto en Supabase):
+
+```bash
+# .env
+VITE_SUPABASE_URL=URL-SUPABASE
+VITE_SUPABASE_ANON_KEY=Publishable-key
+```
+
+> 💡 Puedes usar el archivo `.env.example` incluido en el repositorio como plantilla.
+
+Luego, inicia el servidor de desarrollo:
+
+```bash
 # Ejecutar en modo desarrollo
 npm run dev
 ```
@@ -57,7 +73,7 @@ proyecto/
 ├── 📂 public/              # Archivos públicos estáticos
 │
 └── 📂 src/
-    ├── 📂 assets/          # imagenes...
+    ├── 📂 assets/          # Imágenes, íconos, etc.
     ├── 📂 components/      # Componentes globales reutilizables
     ├── 📂 features/        # Módulos y features específicos de la aplicación
     ├── 📂 pages/           # Páginas que componen las rutas de la aplicación
@@ -72,12 +88,12 @@ proyecto/
 
 Las siguientes carpetas se pueden agregar dentro de `src/`:
 
-- `hooks/` - Custom hooks globales
-- `context/` - Contextos de React
-- `store/` - Gestión de estado global
-- `utils/` - Funciones helper y utilidades
-- `data/` - Data mock y constantes
-- `auth/` - Lógica de autenticación
+- `hooks/` - Custom hooks globales  
+- `context/` - Contextos de React  
+- `store/` - Gestión de estado global  
+- `utils/` - Funciones helper y utilidades  
+- `data/` - Data mock y constantes  
+- `auth/` - Lógica de autenticación  
 - ...
 
 > Cada desarrollador las incorpora según los requisitos del proyecto.

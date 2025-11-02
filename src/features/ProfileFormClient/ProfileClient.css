@@ -1,0 +1,40 @@
+
+.client_profile_form{
+    font-size: 1rem;
+    font-weight: 500;
+    max-width: 30rem;
+    min-width: 20rem;
+}
+
+.profile_form_title{
+    color: var(--aqua-600);
+    font-weight: 700;
+}
+
+button.profile_form_submit_btn{
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--teal-600);
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+button.profile_form_submit_btn:focus,
+button.profile_form_submit_btn:active{
+    background-color: var(--teal-700);
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.icons_profile_page{
+    color: var(--teal-600);
+    font-size: 2rem;
+}
+
+button.profile_page_form,
+button.profile_page_form:active{
+    border-bottom: 2px solid var(--teal-600) !important;
+}

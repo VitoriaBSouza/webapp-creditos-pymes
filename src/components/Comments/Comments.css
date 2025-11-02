@@ -1,0 +1,20 @@
+.review-card {
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+}
+
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.stars {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
