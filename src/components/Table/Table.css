@@ -1,15 +1,16 @@
 .table-custom thead th {
   font-weight: 600;
-  color: var(--gray-700);
-  border-bottom: 2px solid var(--gray-300);
+  color: var(--teal-700);
+  border-bottom: 2px solid var(--teal-300);
 }
 
 .table-custom tbody tr {
   transition: background-color 0.2s ease;
 }
 
-.table-custom tbody tr:hover {
-  background-color: var(--gray-100);
+.table-hover > tbody > tr:hover > * {
+  background-color: var(--aqua-100-50) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
 }
 
 .table-custom tbody td {
@@ -22,31 +23,31 @@
   border-radius: 0.5rem;
 }
 
-.badge-estado {
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 0.375rem;
+.badge_status{
+  width: 7rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: white;
 }
 
 .badge-pendiente {
   background-color: var(--aqua-600);
-  color: #000;
 }
 
 .badge-aprobado {
   background-color: var(--green-500);
-  color: #fff;
 }
 
 .badge-rechazado {
   background-color: var(--red-600);
-  color: #fff;
 }
 
 .badge-in-review {
   background-color: var(--yellow-600);
-  color: #fff;
+}
+
+.badge-draft {
+  background-color: var(--teal-200);
 }
 
 .table-custom .text-success {
@@ -55,6 +56,13 @@
 
 .table-custom .text-warning {
   color: var(--yellow-500) !important;
+}
+
+.table thead th {
+  font-weight: 600;
+  color: var(--teal-700);
+  border-bottom: 2px solid var(--teal-300);
+  background-color: rgba(210, 209, 209, 0.689);
 }
 
 .table-custom .text-danger {
@@ -73,14 +81,14 @@
 }
 
 .sortable-header:hover {
-  background-color: rgba(13, 110, 253, 0.08) !important;
-  color: var(--blue-600);
+  background-color: var(--teal-100) !important;
+  color: var(--teal-700);
 }
 
 .sortable-header:hover .sort-indicator .sort-circle {
   opacity: 1;
   transform: scale(1.2);
-  background-color: var(--blue-500);
+  background-color: var(--teal-500);
 }
 
 .sort-indicator {
@@ -94,7 +102,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--gray-400);
+  background-color: var(--teal-400);
   opacity: 0.4;
   transition: all 0.3s ease;
 }
@@ -103,41 +111,5 @@
 .sort-indicator.active .sort-circle {
   opacity: 1;
   background-color: var(--blue-600);
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-}
-
-/* Dropdown de acciones */
-.acciones-dropdown .dropdown-toggle {
-  background: transparent;
-  color: var(--gray-700);
-  border: none;
-  font-size: 1.25rem;
-  line-height: 1;
-  padding: 0.25rem 0.5rem;
-}
-
-.acciones-dropdown .dropdown-toggle::after {
-  display: none;
-}
-
-.acciones-dropdown .dropdown-menu {
-  min-width: 220px;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.acciones-dropdown .dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-}
-
-.acciones-dropdown .dropdown-item:hover {
-  background-color: var(--gray-100);
-}
-
-.acciones-dropdown .dropdown-item.text-danger:hover {
-  background-color: rgba(220, 53, 69, 0.1);
+  box-shadow: 0 0 0 3px var(--teal-100);
 }

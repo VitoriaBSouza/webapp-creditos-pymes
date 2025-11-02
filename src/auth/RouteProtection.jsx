@@ -1,36 +1,18 @@
-import React from "react"
+import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import userServices from "../services/userServices.js";
-import { showError } from "../services/toastService.jsx";
 
 export const ProtectedRoute = ({ allowedRole }) => {
-  const token = localStorage.getItem("sb-token");
-  const [loading, setLoading] = React.useState(true);
-  const [isAuthorized, setIsAuthorized] = React.useState(false);
+  const session = JSON.parse(localStorage.getItem("sb-session"));
 
-  React.useEffect(() => {
-    const checkAuth = () => {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      if (!user) {
-        showError("Usuario no autenticado, por favor haz log in.");
-        setLoading(false);
-        return;
-      }
+  // Si no hay sesión, redirige al login
+  if (!session || !session.access_token) {
+    return <Navigate to="/login-users" replace />;
+  }
 
-      if (user.role === allowedRole) {
-        setIsAuthorized(true);
-      } else {
-        showError("Acceso no autorizado.");
-      }
-
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, [allowedRole]);
-
-  if (loading) return <p>Cargando...</p>;
-  if (!isAuthorized) return <Navigate to="/" replace />;
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  if (allowedRole && user?.role && user.role !== allowedRole) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 };

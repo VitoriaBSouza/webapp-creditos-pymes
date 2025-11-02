@@ -1,5 +1,10 @@
 import './SearchBar.css';
 
+//icons
+//Icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+
 export default function SearchBar({ 
   placeholder = "Buscar...", 
   value = "", 
@@ -12,13 +17,13 @@ export default function SearchBar({
       <div className="search-bar-wrapper">
         <input
           type="text"
-          className="search-bar-input"
+          className="search-bar-input border rounded-pill p-2 ps-3"
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
         <button className="search-bar-icon" type="button">
-          🔍
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
       </div>
     </div>

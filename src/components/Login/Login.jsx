@@ -3,15 +3,26 @@ import Button from "../Button/Button";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ButtonActions } from "../Button/ButtonActions";
+import { showError } from "../../services/toastService";
 
 const Login = ({ isPartner = false }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [load, setLoad] = useState(false)
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        ButtonActions.login(navigate, email, password, isPartner);
+    const handleLogin = async () => {
+        setLoad(true);
+        try {
+            await ButtonActions.login(navigate, email, password, isPartner);
+        } catch (error) {
+            console.error(error);
+            showError("Error de acceso: ", error)
+        } finally {
+            setLoad(false);
+        }
     };
+
 
     return (
         <div className="login-card shadow p-4 rounded bg-white">
@@ -64,11 +75,11 @@ const Login = ({ isPartner = false }) => {
                 </div>
 
                 <Button
-                    text="Iniciar Sesión"
+                    text={load ? "Iniciando sesión..." : "Iniciar Sesión"}
                     color="teal"
                     size="md"
                     className="w-100 mb-2"
-                    action={handleLogin}  
+                    action={handleLogin}
                 />
                 {!isPartner && (
                     <Button
@@ -76,7 +87,7 @@ const Login = ({ isPartner = false }) => {
                         color="default"
                         size="md"
                         className="w-100"
-                        action="register"  
+                        action="register"
                     />
                 )}
             </form>

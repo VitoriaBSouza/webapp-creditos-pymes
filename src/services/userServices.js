@@ -15,8 +15,7 @@ const userServices = {};
 userServices.getMyProfile = async () => {
     try {
         
-        const token = await getAccessToken();
-        console.log(token);
+        const token = await getAccessToken();        
         
         const response = await fetch(`${BACKEND_URL}/api/v1/profiles/me`, {
             method: "GET",
@@ -41,7 +40,6 @@ userServices.getMyProfile = async () => {
 };
 
 //fetch usuario por id - para operadores
-
 userServices.getProfileById = async (user_id) => {
     try {
         const token = await getAccessToken();

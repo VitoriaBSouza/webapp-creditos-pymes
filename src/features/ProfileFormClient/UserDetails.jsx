@@ -1,16 +1,18 @@
 import { useState } from "react";
 import "./ProfileClient.css";
 
-export const UserDetails = (props) => {
+export const UserDetails = () => {
+
+    const user = JSON.parse(sessionStorage.getItem("user"));      
 
     const [userData, setUserData] = useState({
-        id: props.id || "",
-        email: props.email || "",
-        first_name: props.name || "",
-        last_name: props.lastname || "",
-        role: props.role || "",
+        id: user.id || "",
+        email: user.email || "",
+        first_name: user.name || "",
+        last_name: user.lastname || "",
+        role: user.role || "",
         password: "",
-        updated_at: props.updated_at || ""
+        updated_at: user.updated_at || ""
     })
 
     const [repeatPassword, setRepeatPassword] = useState("")
@@ -56,6 +58,9 @@ export const UserDetails = (props) => {
             <form 
             className="p-5 border border-2 mx-auto rounded client_profile_form"
             onSubmit={handleSubmit}>
+
+                <p className="lh-sm text-center fw-semibold text-info">Para cambiar los campos bloqueados pongase en contacto con nosotros.</p>
+
                 <div className="mb-4">
                     <label htmlFor="user_name" className="form-label">
                         Nombre
@@ -67,7 +72,8 @@ export const UserDetails = (props) => {
                         value={userData.first_name}
                         placeholder="Nombre"
                         aria-label="user_name" 
-                        onChange={handleChange}/>
+                        onChange={handleChange}
+                        disabled/>
                 </div>
 
                 <div className="mb-4">
@@ -81,7 +87,8 @@ export const UserDetails = (props) => {
                         value={userData.last_name}
                         placeholder="Apellidos"
                         aria-label="user_lastname" 
-                        onChange={handleChange}/>
+                        onChange={handleChange}
+                        disabled/>
                 </div>
 
                 <div className="mb-4 m-0 p-0">

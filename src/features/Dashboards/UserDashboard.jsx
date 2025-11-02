@@ -1,151 +1,134 @@
-import './UserDashboard.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from "react";
 
-//services
-import { fetchCreditApplications } from '@/services/creditService';
-import companyServices from '../../services/companyServices';
-import { NewLoanBtn } from '../CreateNewLoan/NewLoanBtn';
+// CSS
+import "./UserDashboard.css";
 
-//components
-import Table from '@/components/Table/Table';
-import SearchBar from '@/components/SearchBar/SearchBar';
-import { Pagination } from '../../components/Pagination';
-import StatusBadge from '../../components/Table/StatusBadge';
-import ActionsDropdown from './ActionDropdown';
+// Services
+import { fetchCreditApplications } from "@/services/creditService";;
+
+// Components
+import { NewLoanBtn } from "../CreateNewLoan/NewLoanBtn";
+import Table from "@/components/Table/Table";
+import SearchBar from "@/components/SearchBar/SearchBar";
+import StatusBadge from "../../components/Table/StatusBadge";
+import ActionsDropdown from "./ActionDropdown";
+import { Pagination } from "../../components/Pagination/Pagination";
+import { showError } from "../../services/toastService";
 
 export default function UserDashboard() {
-  const [searchText, setSearchText] = useState('');
-  const [dateFilter, setDateFilter] = useState(""); // NEW: column filter for date
+  const [searchText, setSearchText] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
   const [loans, setLoans] = useState([]);
-  const [company, setCompany] = useState("");
-
+  const [company, setCompany] = useState(() => JSON.parse(sessionStorage.getItem("my-company")));
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
 
-  // modal state per loan
-  const [openModals, setOpenModals] = useState({});
+  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem("user")));
 
-  const user = JSON.parse(localStorage.getItem('sb-user'));
-
-  const loadCreditApplications = async (pageNumber = 1) => {
-    if (!user) return;
-
+  const loadCreditApplications = async (pageNumber = page) => {
+    if (!user?.id) return;
     setLoading(true);
     try {
       const data = await fetchCreditApplications(user.id, pageNumber, limit);
       setLoans(data.items || []);
       setTotalPages(data.totalPages || 1);
-      setLimit(data.perPage || limit);
     } catch (err) {
-      console.error("Error fetching credit applications:", err);
+      console.error("Error fetching loans:", err);
+      showError("Error al cargar solicitudes");
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleModal = (loanId) => {
-    setOpenModals(prev => ({
-      ...prev,
-      [loanId]: !prev[loanId],
-    }));
-  };
-
   useEffect(() => {
-    loadCreditApplications(page);
+    loadCreditApplications();
+  }, [user, page, company]);
 
-    const loadCompany = async () => {
-      try {
-        const companyData = await companyServices.getMyCompanyDetails();
-        setCompany(companyData);
-      } catch (err) {
-        console.error("Error fetching company details:", err);
-      }
-    };
-    loadCompany();
-  }, [page]);
 
-  // Filter with search text and date column
-  const filteredData = loans.filter((item) => {
+  const filteredData = useMemo(() => {
+    if (!searchText && !dateFilter) return loans;
     const search = searchText.toLowerCase();
-    const dateStr = item.created_at ? item.created_at.split('T')[0] : "";
+    return loans.filter((item) => {
+      const dateStr = item.created_at?.split("T")[0] || "";
+      return (
+        (!searchText ||
+          item.id.toLowerCase().includes(search) ||
+          item.requested_amount?.toString().toLowerCase().includes(search) ||
+          item.status?.toLowerCase().includes(search)) &&
+        (!dateFilter || dateStr === dateFilter)
+      );
+    });
+  }, [loans, searchText, dateFilter]);
 
-    return (
-      (item.id.toLowerCase().includes(search) ||
-        item.requested_amount?.toString().toLowerCase().includes(search) ||
-        item.status?.toLowerCase().includes(search)) &&
-      (!dateFilter || dateStr === dateFilter)
-    );
-  });
-
-  const paginatedData = filteredData;
-
-  const columns = [
-    {
-      key: "id",
-      label: "ID Solicitud",
-      render: (value) => <span className="fw-semibold">## {value}</span>,
-    },
-    {
-      key: "requested_amount",
-      label: "Monto",
-      render: (value) => `$${value}`,
-      sortable: true,
-    },
-    {
-      key: "status",
-      label: "Estado",
-      render: (value) => <StatusBadge status={value} />,
-      sortable: true,
-    },
-    {
-      key: "created_at",
-      label: "Fecha",
-      render: (value) => new Date(value).toLocaleDateString(),
-      filter: {
-        type: "date",
-        value: dateFilter,
-        onChange: setDateFilter,
+  const columns = useMemo(
+    () => [
+      {
+        key: "id",
+        label: "ID Solicitud",
+        render: (value) => <span className="fw-semibold">{value}</span>,
       },
-    },
-    {
-      key: "acciones",
-      label: "Acciones",
-      render: (value, row) => (
-        <ActionsDropdown
-          row={row}
-          company={company}
-          isOpen={!!openModals[row.id]}
-          toggleModal={() => toggleModal(row.id)}
-          onSuccess={loadCreditApplications}
-        />
-      ),
-    },
-  ];
+      {
+        key: "requested_amount",
+        label: "Monto",
+        render: (value) => `$${value}`,
+        sortable: true,
+      },
+      {
+        key: "status",
+        label: "Estado",
+        render: (value) => <StatusBadge status={value} />,
+        sortable: true,
+      },
+      {
+        key: "created_at",
+        label: "Fecha",
+        render: (value) => new Date(value).toLocaleDateString(),
+        sortable: true,
+      },
+      {
+        key: "acciones",
+        label: "Acciones",
+        render: (_, row) => (
+          <ActionsDropdown
+            row={row}
+            company={company}
+            onSuccess={() => loadCreditApplications(page)}
+          />
+        ),
+      },
+    ],
+    [page]
+  );
 
   return (
     <div className="container my-5">
-      <div className="dashboard-header text-center mb-4">
-        <h2>Bienvenido {user?.email}</h2>
+      <div className="dashboard-header text-center mb-4 fw-bold">
+        <h1>Bienvenido {user?.first_name}</h1>
       </div>
 
-      <SearchBar placeholder="Buscar por ID, monto o estado..." value={searchText} onChange={setSearchText} />
+      <SearchBar
+        placeholder="Buscar por ID, monto o estado..."
+        value={searchText}
+        onChange={setSearchText}
+      />
 
       <div className="mb-4">
-        <NewLoanBtn company={company} onSuccess={loadCreditApplications} />
+        <NewLoanBtn
+          company={company || { legal_name: "" }}
+          onSuccess={() => loadCreditApplications(page)}
+        />
       </div>
 
-      <div className="dashboard-header mb-3">
-        <h3 className="text-primary">Mis Solicitudes</h3>
-      </div>
+      <h2 className="user_dashboard_loans my-4 ms-5">Mis Solicitudes</h2>
 
       {loading ? (
         <p className="text-center my-5">Cargando solicitudes...</p>
       ) : (
         <>
-          <div className="table-wrapper">
-            <Table columns={columns} data={paginatedData} />
+          <div className="table-wrapper mb-5 mx-auto">
+            <Table columns={columns} data={filteredData} />
           </div>
           <Pagination
             page={page}

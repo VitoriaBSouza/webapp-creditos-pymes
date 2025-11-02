@@ -34,6 +34,7 @@ button.profile_form_submit_btn:active{
     font-size: 2rem;
 }
 
-button.profile_page_form:focus{
+button.profile_page_form,
+button.profile_page_form:active{
     border-bottom: 2px solid var(--teal-600) !important;
 }
