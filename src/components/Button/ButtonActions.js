@@ -8,7 +8,7 @@ export const ButtonActions = {
   loginUser: (navigate) => navigate("/login-users"),
   loginPartner: (navigate) => navigate("/login-partners"),
   register: (navigate) => navigate("/sign-up"),
-  alert: () => alert("Ejemplo"),
+  alert: () => alert("Ha habido un problema, por favor intente nuevamnete."),
 
   login: async (navigate, email, password, isPartner = false) => {
     if (!email || !password) {
@@ -16,45 +16,16 @@ export const ButtonActions = {
       return;
     }
 
-    // ✅ Iniciar sesión correctamente
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Iniciar sesión
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return showError(error.message || "Error al iniciar sesión.");
 
-    if (error) {
-      showError(error.message || "Error al iniciar sesión.");
-      return;
-    }
-
-    const user = data.user;
     const session = data.session;
 
-    console.log("Sesión iniciada:", session);
-    console.log("Token JWT:", session.access_token);
+    // Store session
+    localStorage.setItem("session", JSON.stringify(session));
+    navigate(isPartner ? "/partner-dashboard" : "/dashboard");
+    showSuccess("Login correcto");
 
-    //Supabase ya maneja el refresh automático
-    localStorage.setItem("sb-session", JSON.stringify(session));
-
-    //Obtener perfil del backend
-    try {
-      const profile = await userServices.getMyProfile(user.id);
-
-      if (profile && !profile.error) {
-        sessionStorage.setItem("user", JSON.stringify(profile));
-        showSuccess(`Bienvenido ${user.email}`);
-        navigate(isPartner ? "/partner-dashboard" : "/dashboard");
-      } else {
-        showError(profile?.error || "No se pudo cargar el perfil.");
-      }
-    } catch (err) {
-      console.error(err);
-      showError("Error obteniendo el perfil.");
-    }
-
-    // Fetch profile in background
-    userServices.getMyProfile(user.id)
-      .then(profile => sessionStorage.setItem("user", JSON.stringify(profile)))
-      .catch(err => console.error(err));
-  },
-};
+  }
+}

@@ -1,49 +1,43 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 //CSS files
 import "../features/ProfileFormClient/ProfileClient.css";
 
-//Icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHouse } from '@fortawesome/free-regular-svg-icons'
-import { faUser } from '@fortawesome/free-regular-svg-icons'
-
 //services
-import userServices from "../services/userServices.js";
+import { showError } from "../services/toastService";
+import userServices from "../services/userServices";
+
+//Icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faUser } from '@fortawesome/free-regular-svg-icons';
 
 //Components
 import { CompanyDetails } from "../features/ProfileFormClient/CompanyDetails";
 import { UserDetails } from "../features/ProfileFormClient/UserDetails";
 
 export const ClientProfilePage = () => {
-
     const [companyForm, setCompanyForm] = useState(true);
     const [userForm, setUserForm] = useState(false);
-    const navigate = useNavigate();
-
-    const [userDetails, setUserDetails] = useState("")
-
-    const checkRole = async () => {
-        const profile = await userServices.getMyProfile();
-
-        if(profile){
-            setUserDetails(profile)
-        }
-        if (!profile) {
-            navigate("/");
-            return;
-        }
-
-        if (profile.role !== "applicant") {
-            alert("No tienes derecho de acceso a esta página.");
-            navigate("/dashboard");
-            return;
-        }
-    };
+    const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem("user")));
 
     useEffect(() => {
-        checkRole();
+        const userDetails = async () => {
+            try {
+                // Perfil
+                if (!user?.id) {
+                    const profile = await userServices.getMyProfile();
+                    if (profile) {
+                        sessionStorage.setItem("user", JSON.stringify(profile));
+                        setUser(profile);
+                    }
+                }
+            } catch (err) {
+                console.error("Error al inicializar perfil:", err);
+                showError("Error al cargar datos del perfil");
+            }
+        };
+
+        userDetails();
     }, []);
 
     return (
@@ -52,29 +46,23 @@ export const ClientProfilePage = () => {
                 <div className="btn-group" role="group" aria-label="Basic example">
                     <button
                         type="button"
-                        className="btn rounded-0 pb-2 profile_page_form border-0"
+                        className={`btn rounded-0 pb-2 border-0 ${companyForm ? "profile_page_form" : ""}`}
                         onClick={() => { setCompanyForm(true); setUserForm(false) }}>
                         <FontAwesomeIcon icon={faHouse} className="icons_profile_page" />
                     </button>
                     <button
                         type="button"
-                        className="btn rounded-0 pb-2 profile_page_form border-0"
+                        className={`btn rounded-0 pb-2 border-0 ${userForm ? "profile_page_form" : ""}`}
                         onClick={() => { setCompanyForm(false); setUserForm(true) }}>
                         <FontAwesomeIcon icon={faUser} className="icons_profile_page" />
                     </button>
                 </div>
-
             </div>
-            {companyForm ?
-                <CompanyDetails />
-                :
-                <UserDetails 
-                id={userDetails.id}
-                email={userDetails.email}
-                name={userDetails.first_name}
-                lastname={userDetails.last_name}
-                updated_at={userDetails.updated_at}
-                />}
+
+            {companyForm ? 
+                <CompanyDetails/> 
+                : 
+                <UserDetails user={user} />}
         </div>
     );
-}
+};

@@ -4,8 +4,9 @@ import { useState } from "react";
 import "./NewLoanBtn.css";
 
 //services
-import { createNewLoan, updateLoanStatus } from "../../services/creditService";
+import { createNewLoan } from "../../services/creditService";
 import documentServices, { DocumentTypes } from "../../services/documentServices";
+import { showError, showSuccess } from "../../services/toastService";
 
 export const NewLoanBtn = ({ company, onSuccess }) => {
 
@@ -82,66 +83,68 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
         e.preventDefault();
 
         try {
-            //Crear el borrador del préstamo
             const createdDraft = await createNewLoan({
                 ...newLoanForm,
-                company_id: company.id,
+                status: "draft",
             });
 
             if (!createdDraft) {
                 console.error("Error al crear el borrador");
+                showError("Error al crear el borrador");
                 return;
             }
 
-            //Subir documentos al bucket privado
             const filesToUpload = {
                 [DocumentTypes.FINANCIAL_STATEMENT]: document.getElementById("financeStatement")?.files,
                 [DocumentTypes.BANK_STATEMENT]: document.getElementById("bankStatements")?.files,
                 [DocumentTypes.OTHER]: document.getElementById("accountingReports")?.files,
             };
 
+            console.log(filesToUpload);
+
+
+            // Subir archivos a tmp usando uploadLoanDraftDocument
             for (const [docType, files] of Object.entries(filesToUpload)) {
-                if (files && files.length > 0) {
+                if (files?.length > 0) {
                     for (const file of files) {
-                        await documentServices.uploadLoanDocument(createdDraft.id, docType, file);
+                        await documentServices.uploadLoanDraftDocument(createdDraft.id, docType, file, true);
                     }
                 }
             }
 
-            //Estado default es draft para las nuevas solicitudes
-            //Refrescar dashboard
             if (onSuccess) onSuccess();
-
-            window.alert("Borrador del préstamo guardado");
             closeModal();
+            showSuccess("Borrador guardado.");
+
             setNewLoan({
                 requested_amount: "",
                 term_months: "",
                 purpose: "",
-                purpose_other: ""
+                purpose_other: "",
             });
-            document.getElementById("financeStatement").value = "";
-            document.getElementById("bankStatements").value = "";
-            document.getElementById("accountingReports").value = "";
+
+            ["financeStatement", "bankStatements", "accountingReports"].forEach(
+                (id) => (document.getElementById(id).value = "")
+            );
 
         } catch (error) {
-            console.error("Error al guardar borrador:", error);
+            console.error("Error creando la solicitud de crédito:", error);
+            if (error?.detail) {
+                console.error("Detalle del error:", error.detail);
+            }
+            showError("Error al crear el borrador");
+
         }
     };
 
-    console.log(company);
-    
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
 
         try {
-            //Crear el préstamo
             const createdLoan = await createNewLoan({
                 ...newLoanForm,
-                company_id: company.id,
+                status: "pending",
             });
 
             if (!createdLoan) {
@@ -149,41 +152,39 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
                 return;
             }
 
-            //Subir documentos al bucket privado
             const filesToUpload = {
                 [DocumentTypes.FINANCIAL_STATEMENT]: document.getElementById("financeStatement")?.files,
                 [DocumentTypes.BANK_STATEMENT]: document.getElementById("bankStatements")?.files,
                 [DocumentTypes.OTHER]: document.getElementById("accountingReports")?.files,
             };
 
+            // Subir todos los archivos directamente a private
             for (const [docType, files] of Object.entries(filesToUpload)) {
-                if (files && files.length > 0) {
+                if (files?.length > 0) {
                     for (const file of files) {
                         await documentServices.uploadLoanDocument(createdLoan.id, docType, file);
                     }
                 }
             }
 
-            //Actualizar el estado a "pending" para que lo vean los operadores en su dashboard
-            await updateLoanStatus(createdLoan.id, "pending", createdLoan);
-
-            //Refrescar dashboard
             if (onSuccess) onSuccess();
-
-            window.alert("Solicitud de préstamo creada");
+            showSuccess("Solicitud de préstamo creada correctamente.");
             closeModal();
+
             setNewLoan({
                 requested_amount: "",
                 term_months: "",
                 purpose: "",
-                purpose_other: ""
+                purpose_other: "",
             });
-            document.getElementById("financeStatement").value = "";
-            document.getElementById("bankStatements").value = "";
-            document.getElementById("accountingReports").value = "";
+
+            ["financeStatement", "bankStatements", "accountingReports"].forEach(
+                (id) => (document.getElementById(id).value = "")
+            );
 
         } catch (error) {
             console.error("Error al enviar la solicitud:", error);
+            showError("Error al enviar la solicitud:", error);
         }
     };
 
@@ -431,19 +432,19 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
                                 <div className="modal-footer flex-column border-0">
                                     <button
                                         type="submit"
-                                        className="btn saveBtn_modal mx-auto"
+                                        className="border-0 p-2 rounded saveBtn_modal mx-auto"
                                         onClick={handleDraft}>
                                         Guardar
                                     </button>
                                     <div className="d-flex justify-content-between w-100">
                                         <button type="button"
-                                            className="btn cancelBtn_modal p-2 m-4"
+                                            className="border-0 rounded cancelBtn_modal p-2 m-4"
                                             data-bs-dismiss="modal"
                                             onClick={() => { document.activeElement?.blur() }}>
                                             Cancelar
                                         </button>
                                         <button type="submit"
-                                            className="btn submitBtn_modal p-2 m-4"
+                                            className="border-0 rounded submitBtn_modal p-2 m-4"
                                             onClick={() => { document.activeElement?.blur() }}>
                                             Enviar Solicitud
                                         </button>

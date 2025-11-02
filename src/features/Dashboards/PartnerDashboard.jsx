@@ -1,11 +1,19 @@
-import './UserDashboard.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+//CSS files
+import './UserDashboard.css';
+
+//services
+
+//components
 import Table from '@/components/Table/Table';
 import SearchBar from '@/components/SearchBar/SearchBar';
-import { fetchCreditApplications } from '../../services/creditService';
-import { Pagination } from '../../components/Pagination';
+import { Pagination } from "../../components/Pagination/Pagination";
+
+//icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import {
   faCircleCheck,
   faCircleXmark,

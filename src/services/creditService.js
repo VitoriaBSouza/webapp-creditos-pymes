@@ -157,8 +157,8 @@ export async function getLoanById(loan_id) {
 
 export async function createNewLoan(newLoanData) {
   try {
-
     const token = await getAccessToken();
+    if (!token) throw new Error("No se encontró token de autenticación.");
 
     const response = await fetch(`${BACKEND_URL}/api/v1/credit-applications/`, {
       method: "POST",
@@ -169,19 +169,22 @@ export async function createNewLoan(newLoanData) {
       body: JSON.stringify(newLoanData),
     });
 
+    // Si el servidor no responde con 2xx
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || "Error al crear la solicitud de crédito");
+      console.error("Respuesta del backend:", errorData);
+      throw new Error(errorData.detail || `Error ${response.status}: al crear la solicitud de crédito`);
     }
 
     const createdLoan = await response.json();
+    console.log("Solicitud de crédito creada:", createdLoan);
     return createdLoan;
 
   } catch (err) {
-    console.error("Error creando la solicitud de crédito:", err);
+    console.error("Error creando la solicitud de crédito:", err.message);
     return null;
   }
-};
+}
 
 //Actualiza el estado de una solicitud de crédiot - operadores
 export async function updateLoanStatus(applicationId, newStatus, currentLoanData) {
@@ -240,3 +243,26 @@ export const updateLoanDraft = async (application_id, updateData) => {
   }
 };
 
+export const deleteCreditApplication = async (application_id) => {
+  try {
+    const token = await getAccessToken();
+    const resp = await fetch(`${BACKEND_URL}/api/v1/credit-applications/${application_id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (resp.status === 204) return true;
+
+    if (!resp.ok) {
+      const errorData = await resp.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error eliminando solicitud:", error);
+    throw error;
+  }
+};

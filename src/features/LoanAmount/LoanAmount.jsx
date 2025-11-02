@@ -22,7 +22,7 @@ export default function LoanAmount() {
   const totalInterest = useMemo(() => totalRepayment - amount, [totalRepayment, amount]);
 
   return (
-    <div className="row p-4 pt-5 pb-0 m-0">
+    <div className="row p-4 pt-5 pb-0 m-0 fs-5">
       {/* Card column */}
       <div className="col-lg-8 mb-3 mt-4">
         <div className="card loan-card p-4">

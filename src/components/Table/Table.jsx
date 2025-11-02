@@ -1,5 +1,7 @@
-// Table.jsx
 import { useState } from "react";
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+
+//CSS files
 import "./Table.css";
 
 export default function Table({ columns = [], data = [], className = "" }) {
@@ -7,7 +9,6 @@ export default function Table({ columns = [], data = [], className = "" }) {
 
   const handleSort = (key, sortable) => {
     if (!sortable) return;
-
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") direction = "desc";
     setSortConfig({ key, direction });
@@ -40,21 +41,34 @@ export default function Table({ columns = [], data = [], className = "" }) {
 
   const sortedData = getSortedData();
 
+  const renderSortIcon = (colKey) => {
+    if (sortConfig.key !== colKey) return <FaSort className="sort-icon" />;
+    return sortConfig.direction === "asc" ? (
+      <FaSortUp className="sort-icon active" />
+    ) : (
+      <FaSortDown className="sort-icon active" />
+    );
+  };
+
   return (
     <div className={`card shadow-sm ${className}`}>
       <div className="card-body p-0">
         <div className="table-responsive">
-          <table className="table table-hover table-custom mb-0">
-            <thead className="table-light">
+          <table className="table table-hover table_custom_body mb-0">
+            <thead className="table_header">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={`${col.headerClassName || ""} ${col.sortable !== false ? "sortable-header" : ""
-                      }`}
+                    className={`ps-5 py-3 fw-bold fs-5 ${col.headerClassName || ""} ${
+                      col.sortable !== false ? "sortable-header" : ""
+                    }`}
                     onClick={() => handleSort(col.key, col.sortable !== false)}
                   >
-                    {col.label}
+                    <span className="d-flex align-items-center gap-2">
+                      {col.label}
+                      {col.sortable !== false && renderSortIcon(col.key)}
+                    </span>
                   </th>
                 ))}
               </tr>
@@ -70,7 +84,7 @@ export default function Table({ columns = [], data = [], className = "" }) {
                 sortedData.map((item) => (
                   <tr key={item.id}>
                     {columns.map((col) => (
-                      <td key={col.key} className={col.cellClassName || ""}>
+                      <td key={col.key} className={`ps-5 ${col.cellClassName || ""}`}>
                         {col.render ? col.render(item[col.key], item) : item[col.key]}
                       </td>
                     ))}

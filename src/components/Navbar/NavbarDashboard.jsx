@@ -1,6 +1,7 @@
 import "./Navbar.css";
 import { supabase } from "../../auth/supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { showError, showSuccess } from "../../services/toastService";
 
 export default function NavbarDashboard() {
 
@@ -14,11 +15,11 @@ export default function NavbarDashboard() {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      alert("Sesión cerrada correctamente.");
+      showSuccess("Sesión cerrada correctamente.");
       navigate("/");
     } catch (error) {
       console.error("Error al cerrar sesión:", error.message);
-      alert("Error al cerrar sesión: " + error.message);
+      showError("Error al cerrar sesión: " + error.message);
     }
   };
 
