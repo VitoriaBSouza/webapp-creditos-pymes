@@ -21,7 +21,8 @@ export const ButtonActions = {
     if (error) return showError(error.message || "Error al iniciar sesión.");
 
     const session = data.session;
-
+    console.log(session);
+    
     // Store session
     localStorage.setItem("session", JSON.stringify(session));
     navigate(isPartner ? "/partner-dashboard" : "/dashboard");

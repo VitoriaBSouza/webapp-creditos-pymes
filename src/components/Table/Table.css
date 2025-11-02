@@ -113,3 +113,13 @@
   background-color: var(--blue-600);
   box-shadow: 0 0 0 3px var(--teal-100);
 }
+
+.table-wrapper, .table-container {
+  max-height: none;        /* remove fixed heights */
+  min-height: auto;        /* no forced minimum */
+  overflow-y: auto;        /* scrollbar only if needed */
+}
+.table-responsive {
+  overflow-x: auto;        /* keep horizontal scroll if table is too wide */
+  overflow-y: visible;     /* no vertical scroll forced */
+}

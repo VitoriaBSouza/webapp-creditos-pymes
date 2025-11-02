@@ -21,23 +21,19 @@ export const ClientProfilePage = () => {
     const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem("user")));
 
     useEffect(() => {
-        const userDetails = async () => {
-            try {
-                // Perfil
-                if (!user?.id) {
-                    const profile = await userServices.getMyProfile();
+        if (!user?.id) {
+            userServices.getMyProfile()
+                .then(profile => {
                     if (profile) {
                         sessionStorage.setItem("user", JSON.stringify(profile));
                         setUser(profile);
                     }
-                }
-            } catch (err) {
-                console.error("Error al inicializar perfil:", err);
-                showError("Error al cargar datos del perfil");
-            }
-        };
-
-        userDetails();
+                })
+                .catch(err => {
+                    console.error("Error cargando perfil:", err);
+                    showError("Error al cargar datos del perfil");
+                });
+        }
     }, []);
 
     return (
@@ -59,9 +55,9 @@ export const ClientProfilePage = () => {
                 </div>
             </div>
 
-            {companyForm ? 
-                <CompanyDetails/> 
-                : 
+            {companyForm ?
+                <CompanyDetails />
+                :
                 <UserDetails user={user} />}
         </div>
     );

@@ -69,14 +69,7 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
 
 
     const closeModal = () => {
-        // Forzar blur del elemento enfocado
-        document.activeElement?.blur();
-
-        const modalEl = document.getElementById("newLoanModal");
-        if (modalEl) {
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            modalInstance?.hide();
-        }
+        document.querySelector("#newLoanModal .btn-close")?.click();
     };
 
     const handleDraft = async (e) => {
@@ -99,9 +92,6 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
                 [DocumentTypes.BANK_STATEMENT]: document.getElementById("bankStatements")?.files,
                 [DocumentTypes.OTHER]: document.getElementById("accountingReports")?.files,
             };
-
-            console.log(filesToUpload);
-
 
             // Subir archivos a tmp usando uploadLoanDraftDocument
             for (const [docType, files] of Object.entries(filesToUpload)) {
@@ -225,7 +215,7 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
                         </div>
                         <div className="modal-body p-4">
 
-                            <form onSubmit={handleSubmit}>
+                            <form>
                                 {/* input para datos de empresa no se permiten editar por cuestiones de seguridad y fraude*/}
                                 {/*para editar debería de hacerlo en el perfil y a petición del usuario a un operador */}
                                 <div className="mb-4">
@@ -431,7 +421,7 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
 
                                 <div className="modal-footer flex-column border-0">
                                     <button
-                                        type="submit"
+                                        type="button"
                                         className="border-0 p-2 rounded saveBtn_modal mx-auto"
                                         onClick={handleDraft}>
                                         Guardar
@@ -443,9 +433,14 @@ export const NewLoanBtn = ({ company, onSuccess }) => {
                                             onClick={() => { document.activeElement?.blur() }}>
                                             Cancelar
                                         </button>
-                                        <button type="submit"
+                                        <button
+                                            type="button"
                                             className="border-0 rounded submitBtn_modal p-2 m-4"
-                                            onClick={() => { document.activeElement?.blur() }}>
+                                            onClick={(e) => {
+                                                document.activeElement?.blur();
+                                                handleSubmit(e);
+                                            }}
+                                        >
                                             Enviar Solicitud
                                         </button>
                                     </div>

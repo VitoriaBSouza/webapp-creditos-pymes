@@ -42,7 +42,7 @@ companyServices.getCompanies = async ({ page = 1, limit = 10, order = 'desc' } =
     }
 };
 
-//Fetch de los datos de la empresa dek usuario
+//Fetch de los datos de la empresa de usuario
 companyServices.getMyCompanyDetails = async () => {
     try {
         const token = await getAccessToken();

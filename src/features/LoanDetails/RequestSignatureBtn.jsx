@@ -33,19 +33,13 @@ export const RequestSignatureBtn = ({ client, loan_id }) => {
                 return;
             }
 
-            // Obtener token y usuario actual
-            const token = localStorage.getItem("sb-token");
-            if (!token) throw new Error("Usuario no autenticado");
+            // Obtener usuario actual
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) throw new Error("Usuario no autenticado");
 
-            const {
-                data: { user: operator },
-                error: userError
-            } = await supabase.auth.getUser(token);
-            if (userError || !operator) throw new Error("No se pudo obtener operador");
-
-            // 1️⃣ Subir archivo al tmp folder
+            //Subir archivo al tmp folder
             const safeTitle = title.replace(/[^a-z0-9_-]/gi, "_");
-            const tempPath = `private/tmp/${Date.now()}_${safeTitle}`;
+            const tempPath = `private/${loan_id}/${Date.now()}_${safeTitle}`;
 
             const { data: uploadData, error: uploadError } = await supabase
                 .storage
@@ -54,7 +48,7 @@ export const RequestSignatureBtn = ({ client, loan_id }) => {
 
             if (uploadError) throw new Error("Error al subir archivo temporal: " + uploadError.message);
 
-            // 2️⃣ Crear metadata temporal en la tabla (cumple RLS y no rompe NOT NULL)
+            //Crear metadata temporal en la tabla
             const { data: docData, error: metaError } = await supabase
                 .from("documents")
                 .insert([{
@@ -70,9 +64,9 @@ export const RequestSignatureBtn = ({ client, loan_id }) => {
 
             if (metaError) throw new Error("Error al guardar metadata: " + metaError.message);
 
-            const documentId = docData.id; // ID generado por Supabase
+            const documentId = docData.id;
 
-            // 3️⃣ Generar signed URL temporal para HelloSign
+            //Generar signed URL temporal para HelloSign
             const { data: signedUrlData, error: signedUrlError } = await supabase
                 .storage
                 .from("documents")
@@ -82,7 +76,7 @@ export const RequestSignatureBtn = ({ client, loan_id }) => {
 
             const signedUrl = signedUrlData.signedUrl;
 
-            // 4️⃣ Solicitar firma vía servicio
+            //Solicitar firma vía servicio
             const result = await helloSignServices.requestSignature({
                 signerEmail: client.email,
                 signerName: client.name,
@@ -92,7 +86,7 @@ export const RequestSignatureBtn = ({ client, loan_id }) => {
             console.log("HelloSign result:", result);
             closeModal();
             window.alert("✅ Solicitud de firma enviada correctamente. Se guardará cuando se firme.");
-            
+
         } catch (err) {
             console.error("Error en el proceso de firma:", err);
             alert(err.message || "Error al solicitar la firma");

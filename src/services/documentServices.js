@@ -57,6 +57,62 @@ documentServices.getDocuments = async ({ application_id, page = 1, limit = 10, o
   }
 };
 
+// services/documentServices.js
+documentServices.getDraftDocuments = async (loanId) => {
+  try {
+    const path = `tmp/${loanId}`;
+
+    const { data: files, error } = await supabase.storage
+      .from("documents")
+      .list(path);
+
+    if (error) {
+      console.error("Error listando archivos:", error);
+      return {};
+    }
+
+    if (!files?.length) {
+      return {};
+    }
+
+    const grouped = {};
+    files.forEach(file => {
+      const typeKey = Object.values(DocumentTypes).find(dt => file.name.startsWith(dt));
+      if (!typeKey) return;
+
+      if (!grouped[typeKey]) grouped[typeKey] = [];
+      grouped[typeKey].push({
+        id: file.name, // usar nombre para borrar
+        name: file.name,
+        url: supabase.storage
+          .from("documents")
+          .getPublicUrl(`${path}/${file.name}`).data.publicUrl
+      });
+    });
+
+    console.log("Archivos agrupados:", grouped);
+    return grouped;
+
+  } catch (error) {
+    console.error("Error obteniendo documentos del borrador:", error);
+    return {};
+  }
+};
+
+// borrar archivo de borrador
+documentServices.deleteLoanDraftDocument = async (loanId, fileName) => {
+  try {
+    const filePath = `tmp/${loanId}/${fileName}`;
+    const { data, error } = await supabase.storage.from("documents").remove([filePath]);
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error eliminando archivo del borrador:", error);
+    return null;
+  }
+};
+
+
 // Guarda en carpeta temporal en supabase, para uso con hellosign o pedir documents
 documentServices.uploadLoanDraftDocument = async (loanId, documentType, file, isTemp = false) => {
   try {
@@ -74,7 +130,7 @@ documentServices.uploadLoanDraftDocument = async (loanId, documentType, file, is
       .from("documents")
       .upload(filePath, file, {
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
         metadata: {
           application_id: loanId,
           document_type: documentType,

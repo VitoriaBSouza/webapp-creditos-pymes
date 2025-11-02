@@ -1,15 +1,15 @@
 import { useState } from "react";
 import "./ProfileClient.css";
 
-export const UserDetails = () => {
+export const UserDetails = ({ user }) => {
 
-    const user = JSON.parse(sessionStorage.getItem("user"));      
+    const [loading, setLoading] = useState(false);
 
     const [userData, setUserData] = useState({
         id: user.id || "",
         email: user.email || "",
-        first_name: user.name || "",
-        last_name: user.lastname || "",
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
         role: user.role || "",
         password: "",
         updated_at: user.updated_at || ""
@@ -55,9 +55,14 @@ export const UserDetails = () => {
     return (
         <div className="container">
             <h2 className="py-4 text-center profile_form_title">Información Usuario</h2>
-            <form 
-            className="p-5 border border-2 mx-auto rounded client_profile_form"
-            onSubmit={handleSubmit}>
+            {loading ? 
+            (<p className="fs-5 text-center">
+                    Cargando datos...
+                </p>)
+            :
+            (<form
+                className="p-5 border border-2 mx-auto rounded client_profile_form"
+                onSubmit={handleSubmit}>
 
                 <p className="lh-sm text-center fw-semibold text-info">Para cambiar los campos bloqueados pongase en contacto con nosotros.</p>
 
@@ -71,9 +76,9 @@ export const UserDetails = () => {
                         id="user_name"
                         value={userData.first_name}
                         placeholder="Nombre"
-                        aria-label="user_name" 
+                        aria-label="user_name"
                         onChange={handleChange}
-                        disabled/>
+                        disabled />
                 </div>
 
                 <div className="mb-4">
@@ -86,9 +91,9 @@ export const UserDetails = () => {
                         id="user_lastname"
                         value={userData.last_name}
                         placeholder="Apellidos"
-                        aria-label="user_lastname" 
+                        aria-label="user_lastname"
                         onChange={handleChange}
-                        disabled/>
+                        disabled />
                 </div>
 
                 <div className="mb-4 m-0 p-0">
@@ -101,39 +106,39 @@ export const UserDetails = () => {
                         id="user_email"
                         value={userData.email}
                         placeholder="usuario1@example.com"
-                        aria-label="user_email" 
-                        onChange={handleChange}/>
+                        aria-label="user_email"
+                        onChange={handleChange} />
                 </div>
 
                 <div className="mb-3 m-0 p-0">
                     <label htmlFor="password" className="form-label">
                         Contraseña
                     </label>
-                    <input 
-                    type="password" 
-                    name="password"
-                    value={userData.password}
-                    className="form-control" 
-                    id="user_password" 
-                    onChange={handleChange}/>
+                    <input
+                        type="password"
+                        name="password"
+                        value={userData.password}
+                        className="form-control"
+                        id="user_password"
+                        onChange={handleChange} />
                 </div>
                 <div className="mb-5">
                     <label htmlFor="repeatPassword1" className="form-label">
                         Confirmar contraseña
                     </label>
-                    <input 
-                    type="password" 
-                    value={repeatPassword}
-                    className="form-control" 
-                    id="user_repeatPassword" 
-                    onChange={(e) => setRepeatPassword(e.target.value)}/>
+                    <input
+                        type="password"
+                        value={repeatPassword}
+                        className="form-control"
+                        id="user_repeatPassword"
+                        onChange={(e) => setRepeatPassword(e.target.value)} />
                 </div>
 
                 <button type="submit"
                     className="rounded-2 border-0 p-2 w-75 d-flex mx-auto justify-content-center profile_form_submit_btn">
                     Guardar
                 </button>
-            </form>
+            </form>)}
         </div>
     );
 }

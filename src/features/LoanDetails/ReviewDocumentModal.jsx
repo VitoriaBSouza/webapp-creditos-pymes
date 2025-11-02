@@ -1,5 +1,4 @@
 
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../auth/supabaseClient';
 import documentServices from '../../services/documentServices';
@@ -10,13 +9,15 @@ export const ReviewDocumentModal = ({ document_path, modalId, document_title, lo
     const [actionLoading, setActionLoading] = useState(false);
 
     const getDocumentSignedUrl = async (path) => {
+        if (!path) return null;
+
         const { data, error } = await supabase
             .storage
             .from('documents')
             .createSignedUrl(path, 60);
 
         if (error) {
-            console.error("Supabase error:", error);
+            console.error("Supabase Storage error:", error.message);
             return null;
         }
 

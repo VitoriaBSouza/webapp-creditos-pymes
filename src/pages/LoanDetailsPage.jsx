@@ -24,30 +24,11 @@ export const LoanDetailsPage = () => {
     const [loanIdState] = useState(loanId.loan_id);
 
     const { loading, loan, company, client, documents } = loanDetails(loanIdState);
-    
-    const checkRole = async () => {
-        const partner = await userServices.getMyProfile();
-
-        if (!partner) {
-            navigate("/");
-            return;
-        }
-
-        if (partner.role !== "operator") {
-            alert("No tienes derecho de acceso a esta página.");
-            navigate("/dashboard");
-            return;
-        }
-    };
-
-    console.log(loan?.status);
-
 
     useEffect(() => {
         if (loan?.status === "draft") {
             navigate("/partner-dashboard");
         }
-        checkRole();
     }, [loan, navigate, documents]);
 
     if (loading) return <p className="text-center mt-5 fs-5">Cargando datos...</p>;

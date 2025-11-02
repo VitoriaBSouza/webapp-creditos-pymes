@@ -1,42 +1,37 @@
 import { useState } from "react";
-import "./Navbar.css";
 import { useNavigate } from "react-router-dom";
 
-export default function NavbarHomePage() {
+//CSS files
+import "./Navbar.css";
 
-  const [active, setActive] = useState(false);
-  const [active2, setActive2] = useState(false);
-  const [active3, setActive3] = useState(false);
+export default function NavbarHomePage() {
+  const [activeTab, setActiveTab] = useState("empresas");
   const navigate = useNavigate();
+  const [user, setUser] = useState(() => JSON.parse(sessionStorage.getItem("user")));
 
   const goHome = () => {
-    navigate("/");
+    if (!user?.id) {
+      navigate("/"); // public home
+    } else if (user.role === "applicant") {
+      navigate("/dashboard"); // applicant dashboard
+    } else {
+      navigate("/dashboard-partner"); // partner dashboard
+    }
   };
 
   const handleTabs = (tab) => {
-    if (tab === "empresas") {
-      setActive(true);
-      setActive2(false);
-      setActive3(false);
-    } else if (tab === "partners") {
-      setActive(false);
-      setActive2(true);
-      setActive3(false);
-    } else if (tab === "nosotros") {
-      setActive(false);
-      setActive2(false);
-      setActive3(true);
-    }
+    setActiveTab(tab);
   };
 
   return (
     <header>
-      <img src="/logo.svg" alt="Logo Fintech NC" onClick={goHome}/>
+      <img src="/logo.svg" alt="Logo Fintech NC" onClick={goHome} />
       <nav>
-        <ul>
+        <ul className="navbar_tabs_items">
           <li>
             <a
               href="/"
+              className={activeTab === "empresas" ? "active" : ""}
               onClick={() => handleTabs("empresas")}
             >
               Empresas
@@ -45,6 +40,7 @@ export default function NavbarHomePage() {
           <li>
             <a
               href="#"
+              className={activeTab === "partners" ? "active" : ""}
               onClick={() => handleTabs("partners")}
             >
               Partners
@@ -53,6 +49,7 @@ export default function NavbarHomePage() {
           <li>
             <a
               href="#"
+              className={activeTab === "nosotros" ? "active" : ""}
               onClick={() => handleTabs("nosotros")}
             >
               Sobre Nosotros

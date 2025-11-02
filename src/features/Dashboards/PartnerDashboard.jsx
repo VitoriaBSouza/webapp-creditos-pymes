@@ -1,49 +1,63 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-//CSS files
+// CSS
 import './UserDashboard.css';
 
-//services
+// Services
+import { fetchCreditApplications } from '../../services/creditService';
+import companyServices from '../../services/companyServices';
 
-//components
+// Components
 import Table from '@/components/Table/Table';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import { Pagination } from "../../components/Pagination/Pagination";
-
-//icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import {
-  faCircleCheck,
-  faCircleXmark,
-  faCircleExclamation,
-  faEye,
-} from '@fortawesome/free-solid-svg-icons';
-import companyServices from '../../services/companyServices';
 import StatusBadge from '../../components/Table/StatusBadge';
+
+// Icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faCircleXmark, faCircleExclamation, faEye } from '@fortawesome/free-solid-svg-icons';
 
 export default function PartnerDashboard() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [solicitudes, setSolicitudes] = useState([]);
-  const [company, setCompany] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(100);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   const user = JSON.parse(localStorage.getItem('sb-user'));
 
-  const loadCreditApplications = async (pageNumber = 1) => {
+  // Cargar todas las empresas (o suficiente para los préstamos)
+  const loadCompanies = async () => {
+    try {
+      const data = await companyServices.getCompanies({ page: 1, limit: 100 });
+      return data?.items || [];
+    } catch (err) {
+      console.error("Error fetching companies:", err);
+      return [];
+    }
+  };
+
+  const loadCreditApplicationsWithCompanies = async (pageNumber = 1) => {
     setLoading(true);
     try {
-      const data = await fetchCreditApplications(null, pageNumber, limit);
-      setSolicitudes(data?.items || []);
-      setTotalPages(data?.totalPages || 1);
-      setLimit(data?.perPage || limit);
+      const [loans, companies] = await Promise.all([
+        fetchCreditApplications(null, pageNumber, limit),
+        loadCompanies()
+      ]);
+
+      const mappedLoans = (loans?.items || []).map(loan => {
+        const company = companies.find(c => c.id === loan.company_id);
+        return { ...loan, legal_name: company?.legal_name || '—' };
+      });
+
+      setSolicitudes(mappedLoans);
+      setTotalPages(loans?.totalPages || 1);
+      setLimit(loans?.perPage || limit);
     } catch (err) {
-      console.error('Error fetching credit applications:', err);
+      console.error("Error fetching credit applications or companies:", err);
       setSolicitudes([]);
       setTotalPages(1);
     } finally {
@@ -51,34 +65,15 @@ export default function PartnerDashboard() {
     }
   };
 
-  const loadCompany = async () => {
-    try {
-      const data = await companyServices.getCompanies({ page: 1, limit: 1 });
-      const companyData = data?.items?.[0] || null;
-      setCompany(companyData);
-    } catch (err) {
-      console.error('Error fetching company details:', err);
-      setCompany(null);
-    }
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
-      await loadCompany();
-      await loadCreditApplications(page);
-    };
-    fetchData();
+    loadCreditApplicationsWithCompanies(page);
   }, [page]);
 
-  // Only include loans with status pending, approved, or rejected
+  // Filtrar por status y búsqueda
   const validStatuses = ['pending', 'approved', 'rejected', 'in_review'];
   const filteredData = solicitudes
-    .filter((item) => validStatuses.includes(item.status.toLowerCase()))
-    .map((item) => ({
-      ...item,
-      legal_name: company?.legal_name || '—', // 🔹 Asigna el nombre legal de la empresa
-    }))
-    .filter((item) => {
+    .filter(item => validStatuses.includes(item.status.toLowerCase()))
+    .filter(item => {
       const search = searchText.toLowerCase();
       return (
         item.legal_name?.toLowerCase().includes(search) ||
@@ -90,13 +85,11 @@ export default function PartnerDashboard() {
       );
     });
 
-  const paginatedData = filteredData;
-
-  // Custom renderers
+  // Renderers
   const renderText = (value) => value;
   const renderId = (value) => <span className="fw-semibold">## {value}</span>;
   const renderAmount = (value) => `$${value}`;
-  
+
   const renderVerification = (value, item) => {
     const getIcon = (status) => {
       switch (status.toLowerCase()) {
@@ -124,9 +117,9 @@ export default function PartnerDashboard() {
 
   const columns = [
     { key: 'legal_name', label: 'Solicitante', render: renderText, sortable: true },
-    { key: 'id', label: 'Solicitud', render: renderId, sortable: false },
+    { key: 'id', label: 'Solicitud', render: renderId, sortable: true },
     { key: 'requested_amount', label: 'Monto', render: renderAmount, sortable: true },
-    { key: 'status', label: 'Estado', render: (value) => <StatusBadge status={value} />, sortable: true },
+    { key: 'status', label: 'Estado', render: value => <StatusBadge status={value} />, sortable: true },
     { key: 'created_at', label: 'Fecha de Creación', render: renderText, sortable: true },
     {
       key: 'Más detalles',
@@ -142,8 +135,8 @@ export default function PartnerDashboard() {
 
   return (
     <div className="container my-5">
-      <div className="dashboard-header text-center mb-4">
-        <h2>Panel de Socios</h2>
+      <div className="dashboard-header text-center mb-4 fw-bold">
+        <h1>Bienvenido {user?.first_name}</h1>
       </div>
 
       <SearchBar
@@ -152,11 +145,9 @@ export default function PartnerDashboard() {
         onChange={setSearchText}
       />
 
-      <div className="dashboard-header mb-3 mt-4">
-        <h3 className="text-primary">Solicitudes de Crédito</h3>
-      </div>
+      <h2 className="user_dashboard_loans my-4 ms-5 ps-5">Solicitudes de crédito</h2>
 
-      <Table columns={columns} data={paginatedData} />
+      <Table columns={columns} data={filteredData} />
 
       {totalPages > 1 && <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />}
     </div>

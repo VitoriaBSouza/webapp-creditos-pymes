@@ -11,24 +11,24 @@ import { showError, showSuccess } from "../../services/toastService.jsx";
 export const CompanyDetails = () => {
 
     const [loading, setLoading] = useState(false);
-    const [company, setCompany] = useState(null);
+    const [company, setCompany] = useState(() => JSON.parse(sessionStorage.getItem("my-company")));
 
     const [formCompany, setFormCompany] = useState({
-        id: "",
-        user_id: "",
-        legal_name: "",
-        tax_id: "",
-        contact_email: "",
-        contact_phone: "",
+        id: company?.id || "",
+        user_id: company?.user_id || "",
+        legal_name: company?.legal_name || "",
+        tax_id: company?.tax_id || "",
+        contact_email: company?.contact_email || "",
+        contact_phone: company?.contact_phone || "",
         address: {
-            street: "",
-            city: "",
-            state: "",
-            zip_code: "",
-            country: ""
+            street: company?.address?.street || "",
+            city: company?.address?.city || "",
+            state: company?.address?.state || "",
+            zip_code: company?.address?.zip_code || "",
+            country: company?.address?.country || ""
         },
-        created_at: "",
-        updated_at: ""
+        created_at: company?.created_at || "",
+        updated_at: company?.updated_at || ""
     });
 
     const handleChange = e => {
