@@ -116,7 +116,6 @@ export default function PartnerDashboard() {
   };
 
   const columns = [
-    { key: 'legal_name', label: 'Solicitante', render: renderText, sortable: true },
     { key: 'id', label: 'Solicitud', render: renderId, sortable: true },
     { key: 'requested_amount', label: 'Monto', render: renderAmount, sortable: true },
     { key: 'status', label: 'Estado', render: value => <StatusBadge status={value} />, sortable: true },

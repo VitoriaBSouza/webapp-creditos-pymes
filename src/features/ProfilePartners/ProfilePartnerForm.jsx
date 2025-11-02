@@ -88,7 +88,7 @@ export const ProfilePartnerForm = ({ operator }) => {
                         onChange={handleChange}/>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 m-0">
                     <label htmlFor="operator_email" className="form-label">
                         Correo electrónico
                     </label>
@@ -103,7 +103,7 @@ export const ProfilePartnerForm = ({ operator }) => {
                         onChange={handleChange}/>
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3 m-0">
                     <label htmlFor="operator_password" className="form-label">
                         Contraseña
                     </label>

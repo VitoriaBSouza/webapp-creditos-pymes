@@ -11,11 +11,11 @@ export default function NavbarDashboard() {
 
   const goHome = () => {
     if (!user?.id) {
-      navigate("/");
+      navigate("/"); // public home
     } else if (user.role === "applicant") {
-      navigate("/dashboard");
+      navigate("/dashboard"); // applicant dashboard
     } else {
-      navigate("/dashboard-partner");
+      navigate("/dashboard-partner"); // partner dashboard
     }
   };
 
@@ -24,7 +24,10 @@ export default function NavbarDashboard() {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
+      // Clear all sessionStorage data
       sessionStorage.clear();
+
+      // Optional: also clear localStorage if used
       localStorage.clear();
 
       showSuccess("Sesión cerrada correctamente.");
@@ -37,22 +40,17 @@ export default function NavbarDashboard() {
 
   const handleTabs = (tab) => {
     setActiveTab(tab);
-
-    if (!user?.role) return; // safety check
-
-    const routes = {
-      dashboard: {
-        applicant: "/dashboard",
-        operator: "/partner-dashboard",
-      },
-      profile: {
-        applicant: "/user/profile",
-        operator: "/partner/profile",
-      },
-    };
-
-    const path = routes[tab]?.[user.role];
-    if (path) navigate(path);
+    if(tab === "dashboard" && user.role === "applicant"){
+      navigate("/dashboard");
+    }else if(tab === "dashboard" && user.role === "operator"){
+      navigate("/partner-dashboard")
+    }else if(tab === "profile" && user?.role === "applicant"){
+      navigate( "/user/profile")
+    }else if(tab === "profile" && user?.role === "operator"){
+      navigate("/partner/profile")
+    }else{
+      navigate("/#")
+    }
   };
 
   return (

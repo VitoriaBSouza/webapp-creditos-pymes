@@ -18,12 +18,16 @@ export const PartnerProfilePage = () => {
                     if (profile) {
                         sessionStorage.setItem("user", JSON.stringify(profile));
                         setUser(profile);
+                        console.log(profile);
                     }
                 })
                 .catch(err => {
                     console.error("Error cargando perfil:", err);
                     showError("Error al cargar datos del perfil");
-                });
+                })
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
         }
     }, []);
 

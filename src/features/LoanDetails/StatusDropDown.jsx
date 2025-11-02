@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 
 //CSS files
 import './LoanPage.css';
-import { updateLoanStatus } from "../../services/creditService";
+import { updateLoanDraft, updateLoanStatus } from "../../services/creditService";
+import { showError, showSuccess } from "../../services/toastService";
 
 export const StatusDropDown = ({ loan_details }) => {
 
@@ -21,16 +22,35 @@ export const StatusDropDown = ({ loan_details }) => {
     }
 
     const handleSelect = async (newStatus) => {
-
-        console.log(newStatus);
-
-        if (newStatus !== loanData.status) {
-            const updatedLoan = await updateLoanStatus(loanData.id, newStatus, loanData);
-
-            setLoanData({ ...loanData, status: newStatus });
-            return updatedLoan;
+        if (newStatus === loanData.status) {
+            setOpen(false);
+            return;
         }
-        setOpen(false);
+
+        try {
+            const updatedLoan = await updateLoanStatus(loan_details.id, newStatus);
+
+            // Verifica que la respuesta tenga un id o lo que sea que indique éxito
+            if (!updatedLoan?.id) {
+                throw new Error("No se pudo actualizar el préstamo en el backend");
+            }
+
+            setLoanData(updatedLoan);
+            showSuccess("Estado de préstamo actualizado correctamente");
+
+        } catch (err) {
+            console.error("Error actualizando préstamo:", err);
+            // Mostrar mensaje legible
+            if (err?.detail) {
+                showError(err.detail);
+            } else if (err instanceof Error) {
+                showError(err.message);
+            } else {
+                showError(JSON.stringify(err));
+            }
+        } finally {
+            setOpen(false);
+        }
     };
 
     return (

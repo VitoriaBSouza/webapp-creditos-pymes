@@ -152,10 +152,7 @@ export default function PartnerDashboard() {
 
       <h2 className="user_dashboard_loans my-4 ms-5 ps-5">Solicitudes de crédito</h2>
 
-      <Table
-              columns={user?.role === 'applicant' ? userColumns : null}
-              data={filteredData}
-            />
+      <Table columns={userColumns} data={filteredData} />
 
       {totalPages > 1 && (
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

@@ -118,12 +118,11 @@ export async function createNewLoan(newLoanData) {
 }
 
 //Actualiza el estado de una solicitud de crédiot - operadores
-export async function updateLoanStatus(applicationId, newStatus, currentLoanData) {
+export async function updateLoanStatus(applicationId, newStatus) {
   try {
     const token = await getAccessToken();
 
     const bodyData = {
-      ...currentLoanData,
       status: newStatus
     };
 
