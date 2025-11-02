@@ -1,0 +1,70 @@
+.dashboard-header h1{
+  color: var(--teal-700);
+  font-weight: 700;
+  font-size: 2.5rem;
+  font-family:'Gill Sans',
+}
+
+.user_dashboard_loans{
+  color: var(--aqua-700);
+  font-weight: 800;
+  font-size: 2rem;
+  font-family:'Franklin Gothic Medium',
+}
+
+.table_container{
+  min-width: 70%;
+  min-height: 10rem;
+}
+
+.table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  padding: 1rem;
+}
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.bg_dropdown_action_toggle:hover,
+.bg_dropdown_action_toggle:focus,
+.bg_dropdown_action_toggle:active{
+  background-color: var(--aqua-200);
+}
+
+.bg_dropdown_item_actions:focus,
+.bg_dropdown_item_actions:active,
+.bg_dropdown_item_actions:hover{
+  background-color: var(--aqua-100-50) !important;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.dropdown_item_edit{
+  color: var(--teal-700) !important;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.dropdown_item_cancel{
+  color: var(--red-700) !important;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.dropdown_item_attach{
+  color: var(--green-700) !important;
+  font-size: 1.2rem;
+  font-weight: 600;
+}

@@ -1,0 +1,27 @@
+.partner_profile_title{
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--aqua-600)
+}
+.partner_profile_form{
+    font-size: 1rem;
+    font-weight: 500;
+    max-width: 30rem;
+    min-width: 20rem;
+}
+
+button.partner_form_submit_btn{
+    background-color: var(--teal-600);
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.icons_profile_page{
+    color: var(--teal-600);
+    font-size: 2rem;
+}
+
+button.profile_page_form:focus{
+    border-bottom: 2px solid var(--teal-600);
+}

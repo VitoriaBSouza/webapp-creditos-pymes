@@ -1,0 +1,83 @@
+
+button.newLoan_modalBtn{
+    background-color: var(--aqua-600);
+    color: white;
+    font-weight: 700;
+}
+
+button.newLoan_modalBtn:hover{
+    background-color: var(--aqua-700);
+    color: white;
+    font-weight: 700;
+}
+
+.newLoan_modal_title{
+    color: var(--aqua-600);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.modal_bg{
+    background-color: rgb(255, 253, 253);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.scrollable_dropdown_currency .dropdown_menu_currency {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+button.dropdown_currency{
+    background-color: rgb(235, 234, 234);
+    color: black;
+}
+
+button.dropdown_currency:hover{
+    background-color: rgb(220, 220, 220);
+    color: black;
+}
+
+button.saveBtn_modal{
+    background-color: var(--aqua-550);
+    color: var(--teal-700);
+    min-width: 35%;
+    border: 1px solid var(--aqua-500);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+button.saveBtn_modal:hover{
+    background-color: var(--aqua-600);
+    color: white;
+    font-weight: 500;
+}
+
+button.cancelBtn_modal{
+    background-color: var(--red-600);
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    min-width: 35%;
+}
+
+button.cancelBtn_modal:hover{
+    background-color: var(--red-700);
+    color: white;
+}
+
+button.submitBtn_modal{
+    background-color: var(--teal-700);
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    min-width: 35%;
+}
+
+button.submitBtn_modal:hover{
+    background-color: var(--teal-600);
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    min-width: 35%;
+}

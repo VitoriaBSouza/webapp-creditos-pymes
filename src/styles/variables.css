@@ -54,4 +54,27 @@
   --yellow-800: #f57f17;
   --yellow-900: #7f4d00;
 
+  /* Aqua */
+  --aqua-100-50: #a8f5f043;
+  --aqua-100: #d2faf7;
+  --aqua-200: #a8f5f0;
+  --aqua-300: #7defe9;
+  --aqua-400: #54e6e2;
+  --aqua-500: #38ebdf;
+  --aqua-550:#38ebdf71;
+  --aqua-600: #25c2b7;
+  --aqua-700: #1d9d93;
+  --aqua-800: #166f68;
+  --aqua-900: #0d3a37;
+
+  /* Teal */
+  --teal-100: #d1e6eb;
+  --teal-200: #a3cdd7;
+  --teal-300: #75b3c3;
+  --teal-400: #479aaf;
+  --teal-500: #1a819b;
+  --teal-600: #176b83;
+  --teal-700: #144c68; /* BOTONES */
+  --teal-800: #0f364a;
+  --teal-900: #09212e;
 }
